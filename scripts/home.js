@@ -10,8 +10,9 @@ const logoutBtnEl = $("btn-logout");
 /* ---------------------------------------------------
     PROCESS FLOW
 ----------------------------------------------------- */
-// Kiểm tra trạng thái đăng nhập
-const currentUser = getFromStorage("currentUser");
+// Lấy currentUser từ localStorage
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+// Không dùng getFromStorage vì khi ko tồn tại currentUser sẽ trả về [] => phải check thêm đk
 
 if (currentUser) {
   // Nếu đã đăng nhập

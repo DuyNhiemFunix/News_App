@@ -10,7 +10,8 @@ const loginEl = $("btn-submit");
     PROCESS FLOW
 ----------------------------------------------------- */
 // Get user array from local storage
-const userArr = getFromStorage("userArr").map(parseUser);
+// const userArr = getFromStorage("userArr").map(parseUser); -> cách ngắn gọn hơn cần xem lại hàm map
+const userArr = getFromStorage("userArr").map((user) => parseUser(user));
 
 // Assign click event to the login button
 loginEl.addEventListener("click", function (event) {

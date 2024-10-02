@@ -10,7 +10,8 @@ const passwordConfirmEl = $("input-password-confirm");
 const registerEl = $("btn-submit");
 
 // Get user array from local storage and convert to User instances
-const userArr = getFromStorage("userArr").map(parseUser);
+// const userArr = getFromStorage("userArr").map(parseUser); -> cách ngắn gọn hơn cần xem lại hàm map
+const userArr = getFromStorage("userArr").map((user) => parseUser(user));
 
 ///////////////////////////////////////////////////////////
 // // Function to get elements by IDs
