@@ -90,22 +90,22 @@ function validateForm() {
     return false;
   }
 
+  // Check if username already exists in userArr
+  const userExists = userArr.some((user) => user.username === username);
+  if (userExists) {
+    showToast("Username already exists", "error");
+    return false;
+  }
+
   // Check if password is more than 8 characters
   if (password.length <= 8) {
-    showToast("Password must be more than 8 characters", "error");
+    showToast("Password must be over 8 characters", "error");
     return false;
   }
 
   // Check if password and password confirmation match
   if (password !== passwordConfirm) {
     showToast("Password confirmation do not match", "error");
-    return false;
-  }
-
-  // Check if username already exists in userArr
-  const userExists = userArr.some((user) => user.username === username);
-  if (userExists) {
-    showToast("Username already exists", "error");
     return false;
   }
 

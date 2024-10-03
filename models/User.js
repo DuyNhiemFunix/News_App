@@ -5,13 +5,20 @@ const $ = document.getElementById.bind(document);
 
 // User class
 class User {
-  constructor(firstName, lastName, username, password, pageSize, category) {
+  constructor(
+    firstName,
+    lastName,
+    username,
+    password,
+    pageSize = 10,
+    category = "General"
+  ) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.username = username;
     this.password = password;
-    this.pageSize = pageSize || 10;
-    this.category = category || "general";
+    this.pageSize = pageSize;
+    this.category = category;
   }
 
   // Fetch news data from API as a method of User
@@ -32,9 +39,6 @@ class User {
 
       // Display the news articles
       displayNews(data.articles);
-
-      // Update pagination controls
-      updatePagination();
     } catch (error) {
       console.error(error.message);
     }
@@ -44,19 +48,8 @@ class User {
 /* ---------------------------------------------------
     FUNCTION AREA
 ----------------------------------------------------- */
-// Save data to localStorage
-function saveToStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-// Get data from localStorage
-function getFromStorage(key) {
-  const data = localStorage.getItem(key);
-  return JSON.parse(data) || [];
-}
-
 // Function to parse user data into User class instance
-// Do khi lưu xuống LocalStorage chỉ có thể lưu được các JS Object chứ không phải Class Instance (chỉ lưu được các thuộc tính chứ các hàm trong class đó sẽ không lưu được). Nên cần một hàm để chuyển từ JS Object sang Class Instance.
+// Khi lưu xuống LocalStorage chỉ lưu được các thuộc tính của Obj còn các hàm (phương thức) trong class đó sẽ không được lưu => Nên cần một hàm để chuyển từ JS Object sang Class Instance.
 function parseUser(userData) {
   return new User(
     userData.firstName,
@@ -68,23 +61,95 @@ function parseUser(userData) {
   );
 }
 
+// Display news articles
+// function displayNews(articles) {
+//   const newsContainer = $("news-container");
+//   newsContainer.innerHTML = ""; // Clear previous articles
+//   articles.forEach((article) => {
+//     const card = `
+//       <div class="card mb-3">
+//         <div class="row no-gutters">
+//           <div class="col-md-4">
+//             <img src="${
+//               article.urlToImage || "../src/404.png"
+//             }" class="card-img" alt="${article.title}">
+//           </div>
+//           <div class="col-md-8">
+//             <div class="card-body">
+//               <h5 class="card-title">${article.title}</h5>
+//               <p class="card-text">${
+//                 article.description || "No description available."
+//               }</p>
+//               <a href="${
+//                 article.url
+//               }" class="btn btn-primary" target="_blank">View</a>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     `;
+//     newsContainer.insertAdjacentHTML("beforeend", card);
+//   });
+// }
+
+//Cách hay nhưng nó trả về 1 cục html và render => thấy lag lag check lai
+function displayNews(articles) {
+  const newsContainer = $("news-container");
+  newsContainer.innerHTML = articles
+    .map(
+      (article) => `
+    <div class="card mb-3">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src="${
+            article.urlToImage || "../src/404.png"
+          }" class="card-img" alt="${article.title}">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">${article.title}</h5>
+            <p class="card-text">${
+              article.description || "No description available."
+            }</p>
+            <a href="${
+              article.url
+            }" class="btn btn-primary" target="_blank">View</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+    )
+    .join(""); // Kết hợp thành một chuỗi và gán một lần
+}
+
+// Save data to localStorage
+function saveToStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+// Get data from localStorage
+function getFromStorage(key) {
+  const data = localStorage.getItem(key);
+  return JSON.parse(data) || [];
+}
+
 /////////////////////////////////////////////
 // Create toast container if it doesn't exist
 function createToastContainer() {
-  let toastContainer = document.getElementById("toast-container");
+  let toastContainer = $("toast-container");
   if (!toastContainer) {
     toastContainer = document.createElement("div");
     toastContainer.id = "toast-container";
     toastContainer.className = "toast-container";
     document.body.appendChild(toastContainer);
   }
+  return toastContainer;
 }
 
-// Function to create and display a toast notification
+// Create and display a toast notification
 function showToast(message, type = "success") {
-  createToastContainer(); // Ensure the toast container exists
-
-  const toastContainer = document.getElementById("toast-container");
+  const toastContainer = createToastContainer();
 
   // Create toast element
   const toast = document.createElement("div");
@@ -98,23 +163,17 @@ function showToast(message, type = "success") {
   toastContainer.appendChild(toast);
 
   // Show toast with animation
-  setTimeout(() => {
-    toast.classList.add("show");
-  }, 100);
+  setTimeout(() => toast.classList.add("show"), 100);
 
   // Remove toast after 3 seconds
   setTimeout(() => {
     toast.classList.remove("show");
-    setTimeout(() => {
-      toast.remove();
-    }, 500); // Allow time for fade-out animation
+    setTimeout(() => toast.remove(), 500); // Fade-out animation
   }, 3000);
 
   // Close button functionality
   toast.querySelector(".close-btn").addEventListener("click", () => {
     toast.classList.remove("show");
-    setTimeout(() => {
-      toast.remove();
-    }, 500);
+    setTimeout(() => toast.remove(), 500);
   });
 }

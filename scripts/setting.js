@@ -15,8 +15,8 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 // Check if currentUser exists
 if (!currentUser) {
-  showToast("You need to log in first!", "error");
-  setTimeout(() => showToast("Redirecting to login page..."));
+  showToast("You need to log in first", "error");
+  setTimeout(() => showToast("Redirecting to login page..."), 1000);
   setTimeout(() => {
     window.location.href = "../index.html";
   }, 3000); // Chuyển trang sau 3 giây
@@ -24,7 +24,8 @@ if (!currentUser) {
   // Ẩn khối main
   mainContainerEl.style.display = "none"; // Ẩn phần tử main
 } else {
-  pageSizeEl.value = currentUser.pageSize || 10;
+  pageSizeEl.value = currentUser.pageSize;
+  categoryEl.value = currentUser.category;
 
   // Assign click event to Save Settings button
   submitBtnEl.addEventListener("click", () => {
