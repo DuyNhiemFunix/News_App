@@ -35,5 +35,5 @@ logoutBtnEl.addEventListener("click", function () {
   localStorage.removeItem("currentUser");
 
   // Chuyển hướng đến trang login
-  window.location.href = "./pages/login.html";
+  window.location.href = "../index.html";
 });

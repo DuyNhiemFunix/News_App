@@ -59,18 +59,16 @@ registerEl.addEventListener("click", function (event) {
     // Save username to localStorage for autofill in login page
     saveToStorage("savedUsername", newUser.username);
 
-    alert(
-      `Successful! Welcome ${
-        newUser.lastName + " " + newUser.firstName
-      }! Click OK to go to the login page.`
-    );
-    // Optionally redirect to another page if needed
+    showToast("Congratulations! Registration successful");
 
     // Clear input fields
     clearFields();
 
     // Redirect to login.html after registration
-    window.location.href = "../pages/login.html";
+
+    setTimeout(() => {
+      window.location.href = "../pages/login.html";
+    }, 2000);
   }
 });
 
@@ -88,26 +86,26 @@ function validateForm() {
 
   // Check if any field is empty
   if (!firstName || !lastName || !username || !password || !passwordConfirm) {
-    alert("Please fill in all fields.");
+    showToast("Please fill in all fields", "error");
     return false;
   }
 
   // Check if password is more than 8 characters
   if (password.length <= 8) {
-    alert("Password must be more than 8 characters.");
+    showToast("Password must be more than 8 characters", "error");
     return false;
   }
 
   // Check if password and password confirmation match
   if (password !== passwordConfirm) {
-    alert("Password and password confirmation do not match.");
+    showToast("Password confirmation do not match", "error");
     return false;
   }
 
   // Check if username already exists in userArr
   const userExists = userArr.some((user) => user.username === username);
   if (userExists) {
-    alert("Username already exists.");
+    showToast("Username already exists", "error");
     return false;
   }
 

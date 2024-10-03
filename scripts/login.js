@@ -29,18 +29,16 @@ loginEl.addEventListener("click", function (event) {
 
     if (currentUser) {
       // Login successful
-      alert(
-        `Welcome back ${currentUser.lastName + " " + currentUser.firstName}!`
-      );
-
       // Save current user to localStorage
       saveToStorage("currentUser", currentUser);
+      showToast("Login successful");
 
       // Redirect to home page
-      window.location.href = "../index.html";
+      setTimeout(() => (window.location.href = "../index.html"), 1000);
+      // window.location.href = "../index.html"
     } else {
       // Login failed
-      alert("Invalid username or password. Please try again.");
+      showToast("Invalid username or password", "error");
     }
   }
 });
@@ -55,7 +53,7 @@ function validateLoginForm() {
 
   // Check if both fields are filled
   if (!username || !password) {
-    alert("Please enter both username and password.");
+    showToast("Please enter username and password", "error");
     return false;
   }
 
