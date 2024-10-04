@@ -2,6 +2,8 @@
     VARIABLE DECLARATION
 ----------------------------------------------------- */
 const $ = document.getElementById.bind(document);
+let totalPages;
+const API_KEY = "840e07adb38d4dc69b7c6ab9c0172026";
 
 // User class
 class User {
@@ -37,6 +39,9 @@ class User {
       // Calculate totalPages after fetching totalResults
       totalPages = Math.ceil(totalResults / this.pageSize);
 
+      // Update Pagination status
+      updatePagination();
+
       // Display the news articles
       displayNews(data.articles);
     } catch (error) {
@@ -59,68 +64,6 @@ function parseUser(userData) {
     userData.pageSize,
     userData.category
   );
-}
-
-// Display news articles
-// function displayNews(articles) {
-//   const newsContainer = $("news-container");
-//   newsContainer.innerHTML = ""; // Clear previous articles
-//   articles.forEach((article) => {
-//     const card = `
-//       <div class="card mb-3">
-//         <div class="row no-gutters">
-//           <div class="col-md-4">
-//             <img src="${
-//               article.urlToImage || "../src/404.png"
-//             }" class="card-img" alt="${article.title}">
-//           </div>
-//           <div class="col-md-8">
-//             <div class="card-body">
-//               <h5 class="card-title">${article.title}</h5>
-//               <p class="card-text">${
-//                 article.description || "No description available."
-//               }</p>
-//               <a href="${
-//                 article.url
-//               }" class="btn btn-primary" target="_blank">View</a>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     `;
-//     newsContainer.insertAdjacentHTML("beforeend", card);
-//   });
-// }
-
-//Cách hay nhưng nó trả về 1 cục html và render => thấy lag lag check lai
-function displayNews(articles) {
-  const newsContainer = $("news-container");
-  newsContainer.innerHTML = articles
-    .map(
-      (article) => `
-    <div class="card mb-3">
-      <div class="row no-gutters">
-        <div class="col-md-4">
-          <img src="${
-            article.urlToImage || "../src/404.png"
-          }" class="card-img" alt="${article.title}">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title">${article.title}</h5>
-            <p class="card-text">${
-              article.description || "No description available."
-            }</p>
-            <a href="${
-              article.url
-            }" class="btn btn-primary" target="_blank">View</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
-    )
-    .join(""); // Kết hợp thành một chuỗi và gán một lần
 }
 
 // Save data to localStorage

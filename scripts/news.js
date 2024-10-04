@@ -10,8 +10,6 @@ const btnNextEl = $("btn-next");
 const btnLastEl = $("btn-last");
 
 let page = 1;
-let totalPages = 0;
-const API_KEY = "94dd90de0ff14b4f9f16072d70756269";
 
 const currentUserData = JSON.parse(localStorage.getItem("currentUser"));
 const currentUser = currentUserData ? parseUser(currentUserData) : null;
@@ -26,7 +24,7 @@ if (!currentUser) {
   setTimeout(() => (window.location.href = "../index.html"), 3000);
   contentEl.style.display = "none"; // Hide content
 } else {
-  loadNewsData();
+  currentUser.getData(page);
 
   // Pagination button click handlers
   btnPrevEl.addEventListener("click", () => changePage(page - 1));
@@ -38,37 +36,17 @@ if (!currentUser) {
 /* ---------------------------------------------------
     FUNCTION AREA
 ----------------------------------------------------- */
-// Load news and update pagination
-function loadNewsData() {
-  currentUser.getData(page);
-  updatePagination();
-}
-
 // Load news when change pages
 function changePage(newPage) {
   if (newPage !== page && newPage >= 1 && newPage <= totalPages) {
     page = newPage;
-    loadNewsData();
+    currentUser.getData(page);
   }
 }
 
-// Prevent multiple API calls on rapid clicks
-// Consider disabling the pagination buttons while a new page is being loaded to prevent multiple API calls in quick succession (hơi khó hiểu)
-// function changePage(newPage) {
-//   if (newPage >= 1 && newPage <= totalPages) {
-//     btnPrevEl.disabled = true;
-//     btnNextEl.disabled = true;
-//     page = newPage;
-//     loadNewsData().finally(() => {
-//       btnPrevEl.disabled = page === 1;
-//       btnNextEl.disabled = page === totalPages;
-//     });
-//   }
-// }
-
 // Update pagination controls
 function updatePagination() {
-  pageNumEl.textContent = page;
+  pageNumEl.textContent = `${page}/${totalPages}`;
   const atFirstPage = page === 1;
   const atLastPage = page === totalPages;
 
@@ -77,6 +55,68 @@ function updatePagination() {
   btnFirstEl.disabled = atFirstPage;
   btnNextEl.disabled = atLastPage;
   btnLastEl.disabled = atLastPage;
+}
+
+// Display news articles
+// function displayNews(articles) {
+//   const newsContainer = $("news-container");
+//   newsContainer.innerHTML = ""; // Clear previous articles
+//   articles.forEach((article) => {
+//     const card = `
+//       <div class="card mb-3">
+//         <div class="row no-gutters">
+//           <div class="col-md-4">
+//             <img src="${
+//               article.urlToImage || "../src/404.png"
+//             }" class="card-img" alt="${article.title}">
+//           </div>
+//           <div class="col-md-8">
+//             <div class="card-body">
+//               <h5 class="card-title">${article.title}</h5>
+//               <p class="card-text">${
+//                 article.description || "No description available."
+//               }</p>
+//               <a href="${
+//                 article.url
+//               }" class="btn btn-primary" target="_blank">View</a>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     `;
+//     newsContainer.insertAdjacentHTML("beforeend", card);
+//   });
+// }
+
+//Cách hay nhưng nó trả về 1 cục html và render => thấy lag lag check lai
+function displayNews(articles) {
+  const newsContainer = $("news-container");
+  newsContainer.innerHTML = articles
+    .map(
+      (article) => `
+    <div class="card mb-3">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src="${
+            article.urlToImage || "../src/404.png"
+          }" class="card-img" alt="${article.title}">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">${article.title}</h5>
+            <p class="card-text">${
+              article.description || "No description available."
+            }</p>
+            <a href="${
+              article.url
+            }" class="btn btn-primary" target="_blank">View</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+    )
+    .join(""); // Kết hợp thành một chuỗi và gán một lần
 }
 
 ////////THAO KHẢO LẠI CÁCH BẤM NÚT KHI CHƯA TỐI ƯU CODE NHƯNG DỄ HIỂU/////////////

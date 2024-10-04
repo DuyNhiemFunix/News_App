@@ -20,9 +20,7 @@ if (currentUser) {
   mainContentEl.style.display = "block"; // Hiển thị thông điệp chào mừng và nút Logout
 
   // Hiển thị thông điệp chào mừng
-  welcomeMessageEl.textContent = `Welcome ${
-    currentUser.lastName + " " + currentUser.firstName
-  }!`;
+  welcomeMessageEl.textContent = `Welcome ${currentUser.firstName}!`;
 } else {
   // Nếu chưa đăng nhập
   loginModalEl.style.display = "block"; // Hiển thị các nút Login/Register
