@@ -4,6 +4,7 @@
 const $ = document.getElementById.bind(document);
 let totalPages;
 const API_KEY = "840e07adb38d4dc69b7c6ab9c0172026";
+// const API_KEY = "94dd90de0ff14b4f9f16072d70756269";
 
 // User class
 class User {
