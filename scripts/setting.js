@@ -2,7 +2,7 @@
 /* ---------------------------------------------------
     VARIABLE DECLARATION
     ----------------------------------------------------- */
-const mainContainerEl = $("main");
+// const mainContainerEl = $("main");
 const submitBtnEl = $("btn-submit");
 const pageSizeEl = $("input-page-size");
 const categoryEl = $("input-category");
@@ -15,14 +15,9 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 // Check if currentUser exists
 if (!currentUser) {
-  showToast("You need to log in first", "error");
-  setTimeout(() => showToast("Redirecting to login page..."), 1000);
-  setTimeout(() => {
-    window.location.href = "../index.html";
-  }, 3000); // Chuyển trang sau 3 giây
-
+  goToLogin();
   // Ẩn khối main
-  mainContainerEl.style.display = "none"; // Ẩn phần tử main
+  // mainContainerEl.style.display = "none";
 } else {
   pageSizeEl.value = currentUser.pageSize;
   categoryEl.value = currentUser.category;
@@ -34,7 +29,7 @@ if (!currentUser) {
     if (pageSizeValue > 100) {
       pageSizeEl.value = 100;
       currentUser.pageSize = 100;
-      showToast("Free API limit", "error");
+      showToast("Free API limits to 100 pages", "error");
       setTimeout(
         () => showToast("News per page set to 100 successfully"),
         1500

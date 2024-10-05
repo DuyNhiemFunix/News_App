@@ -1,6 +1,6 @@
 "use strict";
 
-const todoContainerEl = $("todo-container");
+// const todoContainerEl = $("todo-container");
 const inputTaskEl = $("input-task");
 const btnAddEl = $("btn-add");
 const todoListEl = $("todo-list");
@@ -13,12 +13,8 @@ const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 if (currentUser) {
   displayTasks();
 } else {
-  todoContainerEl.style.display = "none";
-  showToast("You need to log in first", "error");
-  setTimeout(() => showToast("Redirecting to login page..."), 1000);
-  setTimeout(() => {
-    window.location.href = "../index.html";
-  }, 3000); // Chuyển trang sau 3 giây
+  // todoContainerEl.style.display = "none";
+  goToLogin();
 }
 
 btnAddEl.addEventListener("click", () => {

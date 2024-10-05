@@ -38,12 +38,13 @@ const userArr = getFromStorage("userArr").map((user) => parseUser(user));
 /* ---------------------------------------------------
     PROCESS FLOW
 ----------------------------------------------------- */
+firstNameEl.focus();
 
 // Assign click event to the register button
 registerEl.addEventListener("click", function (event) {
   event.preventDefault(); // Prevent the default form submission behavior
 
-  if (validateForm()) {
+  if (validateRegForm()) {
     // Create a new instance of the User class
     const newUser = new User(
       firstNameEl.value.trim(),
@@ -76,7 +77,7 @@ registerEl.addEventListener("click", function (event) {
     FUNCTION AREA
 ----------------------------------------------------- */
 // Form validation function
-function validateForm() {
+function validateRegForm() {
   // Get the values of the inputs
   const firstName = firstNameEl.value.trim();
   const lastName = lastNameEl.value.trim();

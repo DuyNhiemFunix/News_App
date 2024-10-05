@@ -6,146 +6,81 @@
 const queryEl = $("input-query");
 const submitBtnEl = $("btn-submit");
 const newsContainerEl = $("news-container");
-const navPageNumEl = $("nav-page-num");
-const pageNumEl = $("page-num");
-const btnPrevEl = $("btn-prev");
-const btnNextEl = $("btn-next");
-const btnFirstEl = $("btn-first");
-const btnLastEl = $("btn-last");
+// const mainEl = $("main");
 
-let page = 1;
-// let totalPages = 1; // Khai báo biến totalPages để theo dõi tổng số trang
+const currentUserData = JSON.parse(localStorage.getItem("currentUser"));
+const currentUser = currentUserData ? parseUser(currentUserData) : null;
+
+let query;
+// totalPages = 1;
 
 /* ---------------------------------------------------
-    EVENT HANDLERS
+EVENT HANDLERS
 ----------------------------------------------------- */
+// Hide the navigation page
 navPageNumEl.style.display = "none";
 
-// Search button click event
-submitBtnEl.addEventListener("click", () => {
-  const query = queryEl.value.trim();
+if (!currentUser) {
+  // mainEl.style.display = "none";
+  goToLogin();
+} else {
+  const searchUrl = `https://newsapi.org/v2/everything?&pageSize=${currentUser.pageSize}&apiKey=${API_KEY}`;
+  // Search button click event
+  submitBtnEl.addEventListener("click", () => {
+    query = queryEl.value.trim();
+    // Validate if the user has entered a query
+    if (!query) {
+      showToast("Please enter a keyword to search.", "error");
+      return;
+    }
 
-  // Validate if the user has entered a query
-  if (!query) {
-    showToast("Please enter a keyword to search.", "error");
-    return;
-  }
+    // Fetch search results
+    page = 1; // Reset page for new search
+    currentUser.getData(searchUrl, page, query);
+  });
 
-  // Reset page number to 1 for new searches
-  page = 1;
-
-  // Fetch search results
-  fetchSearchResults(query, page);
-});
-
-// Previous page button event
-btnPrevEl.addEventListener("click", () => {
-  if (page > 1) {
-    page--;
-    fetchSearchResults(queryEl.value.trim(), page);
-    updatePagination();
-  }
-});
-
-// Next page button event
-btnNextEl.addEventListener("click", () => {
-  if (page < totalPages) {
-    page++;
-    fetchSearchResults(queryEl.value.trim(), page);
-    updatePagination();
-  }
-});
-
-// First page button event
-btnFirstEl.addEventListener("click", () => {
-  page = 1;
-  fetchSearchResults(queryEl.value.trim(), page);
-  updatePagination();
-});
-
-// Last page button event
-btnLastEl.addEventListener("click", () => {
-  page = totalPages;
-  fetchSearchResults(queryEl.value.trim(), page);
-  updatePagination();
-});
+  // Pagination button click handlers
+  btnPrevEl.addEventListener("click", () =>
+    changePage(searchUrl, page - 1, query)
+  );
+  btnNextEl.addEventListener("click", () =>
+    changePage(searchUrl, page + 1, query)
+  );
+  btnFirstEl.addEventListener("click", () => changePage(searchUrl, 1, query));
+  btnLastEl.addEventListener("click", () =>
+    changePage(searchUrl, totalPages, query)
+  );
+}
 
 /* ---------------------------------------------------
     FUNCTIONS
 ----------------------------------------------------- */
 
-// Fetch search results from News API
-async function fetchSearchResults(query, page = 1) {
-  // const apiKey = "94dd90de0ff14b4f9f16072d70756269"; // Replace with your News API key
-  const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}&page=${page}&pageSize=20`;
+// async function displaySearch(query, page = 1) {
+//   // const apiKey = "94dd90de0ff14b4f9f16072d70756269"; // Replace with your News API key
+//   // const url = `https://newsapi.org/v2/top-headlines?country=us&category=${this.category}&pageSize=${this.pageSize}&page=${page}&apiKey=${API_KEY}`;
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
-    if (data.code === "maximumResultsReached") {
-      showToast(data.message, "error");
-      newsContainerEl.innerHTML = "";
-      return;
-    }
-    if (!data.articles || data.articles.length === 0) {
-      showToast("No results found for your search", "error");
-      newsContainerEl.innerHTML = "";
-      return;
-    }
+//   try {
+//     const response = await fetch(url);
+//     const data = await response.json();
 
-    displaySearchResults(data.articles);
-    totalPages = Math.ceil(data.totalResults / 20); // Assuming 10 articles per page
-    navPageNumEl.style.display = "block";
+//     if (data.code === "maximumResultsReached") {
+//       showToast("Free API limit: " + data.message, "error");
+//       newsContainerEl.innerHTML = "";
+//       return;
+//     }
+//     if (!data.articles || data.articles.length === 0) {
+//       showToast("No results found for your search", "error");
+//       newsContainerEl.innerHTML = "";
+//       return;
+//     }
 
-    updatePagination();
-  } catch (error) {
-    showToast("Error fetching search results:", error);
-  }
-}
+//     renderData(data.articles);
+//     totalPages = Math.ceil(data.totalResults / 20); // Assuming 10 articles per page
+//     navPageNumEl.style.display = "block";
 
-// Display search results in the news container
-function displaySearchResults(articles) {
-  newsContainerEl.innerHTML = articles
-    .map((article) => {
-      return `
-          <div class="card mb-3">
-            <div class="row no-gutters">
-              <div class="col-md-4">
-                <img
-                  src="${article.urlToImage || "../src/404.png"}"
-                  class="card-img"
-                  alt="${article.title}"
-                />
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title">${article.title}</h5>
-                  <p class="card-text">
-                    ${article.description || "No description available."}
-                  </p>
-                  <a
-                    href="${article.url}"
-                    class="btn btn-primary"
-                    target="_blank"
-                  >View</a>
-                </div>
-              </div>
-            </div>
-          </div>
-      `;
-    })
-    .join("");
-}
-
-function updatePagination() {
-  pageNumEl.textContent = `${page}/${totalPages}`;
-  const atFirstPage = page === 1;
-  const atLastPage = page === totalPages;
-
-  // Toggle button disabled states
-  btnPrevEl.disabled = atFirstPage;
-  btnFirstEl.disabled = atFirstPage;
-  btnNextEl.disabled = atLastPage;
-  btnLastEl.disabled = atLastPage;
-}
+//     updatePagination();
+//   } catch (error) {
+//     showToast("Error fetching search results:", error);
+//   }
+// }

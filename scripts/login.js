@@ -9,6 +9,7 @@ const loginEl = $("btn-submit");
 /* ---------------------------------------------------
     PROCESS FLOW
 ----------------------------------------------------- */
+inputUsernameEl.focus();
 // Get user array from local storage
 // const userArr = getFromStorage("userArr").map(parseUser); -> cách ngắn gọn hơn cần xem lại hàm map
 const userArr = getFromStorage("userArr").map((user) => parseUser(user));
@@ -34,7 +35,7 @@ loginEl.addEventListener("click", function (event) {
       showToast("Login successful");
 
       // Redirect to home page
-      setTimeout(() => (window.location.href = "../index.html"), 1000);
+      setTimeout(() => (window.location.href = "../index.html"), 500);
       // window.location.href = "../index.html"
     } else {
       // Login failed
